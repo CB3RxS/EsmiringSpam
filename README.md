@@ -1,1 +1,2 @@
-# EsmiringSpam-An-Intelligent-Spam-and-Phishing-Detection-System
+# EsmiringSpam
+An-Intelligent Spam and Phishing Detection System
