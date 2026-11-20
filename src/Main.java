@@ -1,14 +1,15 @@
 import classifier.Classifier;
+import classifier.KNN;
+import classifier.LogisticRegression;
 import classifier.NaiveBayes;
 import data.DataLoader;
 import data.DataSplitter;
 import data.Preprocessor;
 import eval.Evaluator;
 import eval.Evaluator.EvaluationResult;
-import model.Email;
-
 import java.util.ArrayList;
 import java.util.List;
+import model.Email;
 
 /**
  * Main: loads the data, splits it, trains Naive Bayes, and prints a quick accuracy.
@@ -46,16 +47,25 @@ public class Main {
         evaluator.printReport(nbResult);
         results.add(nbResult);
 
-        // Once KNN and LogisticRegression are implemented, uncomment below:
-        // Classifier knn = new KNN(5);
-        // EvaluationResult knnResult = evaluator.trainAndEvaluate(knn, split.getTrain(), split.getTest());
-        // evaluator.printReport(knnResult);
-        // results.add(knnResult);
+        // k-Nearest Neighbors
+        Classifier knn = new KNN(5);
 
-        // Classifier lr = new LogisticRegression();
-        // EvaluationResult lrResult = evaluator.trainAndEvaluate(lr, split.getTrain(), split.getTest());
-        // evaluator.printReport(lrResult);
-        // results.add(lrResult);
+        EvaluationResult knnResult = evaluator.trainAndEvaluate(
+                knn, split.getTrain(), split.getTest()
+        );
+
+        evaluator.printReport(knnResult);
+        results.add(knnResult);
+
+        // Logistic Regression
+        Classifier lr = new LogisticRegression();
+
+        EvaluationResult lrResult = evaluator.trainAndEvaluate(
+                lr, split.getTrain(), split.getTest()
+        );
+
+        evaluator.printReport(lrResult);
+        results.add(lrResult);
 
         // 5. Export results for Excel / Google Sheets charts
         evaluator.exportToCsv(results, "results.csv");
