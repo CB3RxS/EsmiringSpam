@@ -72,5 +72,3 @@ public class Main {
     }
 }
 
-/*Test Commit */
-/*Test commit 2 */
