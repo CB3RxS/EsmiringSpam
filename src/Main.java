@@ -1,11 +1,15 @@
 import classifier.Classifier;
+import classifier.KNN;
+import classifier.LogisticRegression;
 import classifier.NaiveBayes;
 import data.DataLoader;
 import data.DataSplitter;
 import data.Preprocessor;
-import model.Email;
-
+import eval.Evaluator;
+import eval.Evaluator.EvaluationResult;
+import java.util.ArrayList;
 import java.util.List;
+import model.Email;
 
 /**
  * Main: loads the data, splits it, trains Naive Bayes, and prints a quick accuracy.
@@ -34,16 +38,37 @@ public class Main {
         System.out.println("Train: " + split.getTrain().size()
                 + "  Test: " + split.getTest().size());
 
-        // 4. Train and test
-        Classifier model = new NaiveBayes();
-        model.train(split.getTrain());
+        // 4. Evaluate classifiers
+        Evaluator evaluator = new Evaluator();
+        List<EvaluationResult> results = new ArrayList<>();
 
-        int correct = 0;
-        for (Email e : split.getTest()) {
-            if (model.predict(e) == e.isSpam()) correct++;
-        }
-        System.out.printf("%s accuracy: %.2f%%%n", model.getName(),
-                100.0 * correct / split.getTest().size());
+        Classifier nb = new NaiveBayes();
+        EvaluationResult nbResult = evaluator.trainAndEvaluate(nb, split.getTrain(), split.getTest());
+        evaluator.printReport(nbResult);
+        results.add(nbResult);
+
+        // k-Nearest Neighbors
+        Classifier knn = new KNN(5);
+
+        EvaluationResult knnResult = evaluator.trainAndEvaluate(
+                knn, split.getTrain(), split.getTest()
+        );
+
+        evaluator.printReport(knnResult);
+        results.add(knnResult);
+
+        // Logistic Regression
+        Classifier lr = new LogisticRegression();
+
+        EvaluationResult lrResult = evaluator.trainAndEvaluate(
+                lr, split.getTrain(), split.getTest()
+        );
+
+        evaluator.printReport(lrResult);
+        results.add(lrResult);
+
+        // 5. Export results for Excel / Google Sheets charts
+        evaluator.exportToCsv(results, "results.csv");
     }
 }
 
